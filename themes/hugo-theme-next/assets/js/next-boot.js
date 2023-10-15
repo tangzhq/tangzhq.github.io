@@ -6,7 +6,6 @@
       bubbles: true
     })
   );
-
   if (document.readyState === 'loading') {
     document.addEventListener('readystatechange', onPageLoaded, { once: true });
   } else {

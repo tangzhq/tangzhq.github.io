@@ -20,6 +20,15 @@
     </header>
     {{ $tocEnable := .ctx.Params.toc | default .ctx.Site.Params.toc.enable }}
     <div class="post-body {{ if and $tocEnable .ctx.Site.Params.toc.number }} autonumber {{ end }}" itemprop="articleBody">
+	<!--
+      <script type="test/javascript">
+      var x = document.getElementsByClassName("chroma"); 
+      var i;
+      for (i = 0; i < x.length; i++) {
+        x[i].removeAttribute = "tabindex";
+      }
+      </script>
+	  -->
       {{ partial "post/body.html" (dict "ctx" .ctx "IsHome" .IsHome) }}
     </div>
     <footer class="post-footer">

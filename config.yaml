@@ -46,16 +46,16 @@ markup:
     # style: "monokai"
     anchorLineNos: true
     codeFences: true
-    guessSyntax: true
+    guessSyntax: false
     hl_Lines: ""
     hl_inline: false
     lineAnchors: ""
     lineNoStart: 1
     lineNos: false
-    lineNumbersInTable: false
-    noClasses: true
+    lineNumbersInTable: true
+    noClasses: false
     noHl: false
-    style: monokai
+    style: github
     tabWidth: 2
   tableOfContents:
     # 开始/结束标题级别：1-6 (建议从2开始)
@@ -240,7 +240,7 @@ params:
   menuSets:
     icons: true
     transition: true
-    badges: true
+    badges: false
 
 
   # ---------------------------------------------------------------
@@ -366,7 +366,7 @@ params:
     enable: true
     # 自动设置列表的数字
     # Automatically add list number to toc.
-    number: true
+    number: false
     # 开启自动换行显示
     # If true, all words will placed on next lines 
     # if header width longer then sidebar width.
@@ -412,7 +412,7 @@ params:
 
     # 显示 Hugo 和 NexT 支持
     # Powered by Hugo & NexT
-    powered: false
+    powered: true
 
     # 国内 ICP 备案和公安网备信息
     # Beian ICP and gongan information for Chinese users. 
@@ -540,7 +540,7 @@ params:
   # Easily browse and edit blog source code online.
   postEdit:
     enable: true
-    url: https://github.com/user-name/repo-name/tree/branch-name/subdirectory-name/
+    url: https://github.com
 
 
   # 设置文本的对齐方式
@@ -574,10 +574,10 @@ params:
   codeblock:    
     # 支持样式类型： default | flat | mac
     # Available values: default | flat | mac
-    style: mac
+    style: flat
     # 在代码块上添加拷贝按钮
     # Add copy button on codeblock
-    copyBtn: true
+    copyBtn: false
 
   # 返回顶部设置
   # Backtop settings
@@ -619,7 +619,7 @@ params:
   bookmark:
     # 开启书签功能
     # If true, will display bookmark in all page.
-    enable: true
+    enable: false
     # 自定义书签显示颜色
     # Customize the color of the bookmark.
     color: "#222"
@@ -1050,7 +1050,7 @@ params:
   # Use Animate.css to animate everything.
   # For more information: https://animate.style
   motion:
-    enable: true
+    enable: false
     async: true
     transition:
       # All available transition variants: https://theme-next.js.org/animate/
