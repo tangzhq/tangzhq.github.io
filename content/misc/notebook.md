@@ -15,6 +15,21 @@ https://developer.mozilla.org/zh-CN/docs/Learn/CSS/First_steps/Getting_started
 git学习:  
 https://learngitbranching.js.org/  
 
+C++静态函数调用非静态成员编译报错，使用GetInstance规避  
+linux信号捕获：  
+```cpp
+int VendorInterface::data_service_setup_sighandler(void)
+{
+    struct sigaction sig_act;
+    HDF_LOGI("%s: Entry", __func__);
+    memset(&sig_act, 0, sizeof(sig_act));
+    sig_act.sa_handler = data_service_sighandler;
+    sigemptyset(&sig_act.sa_mask);
+    sigaction(SIGTERM, &sig_act, NULL);
+    return 0;
+}
+```
+
 /***************************************************************************  
 dlclose卸载libbt_vendor库后出现crash，dlclose调用无异常，调用栈显示是  
 
