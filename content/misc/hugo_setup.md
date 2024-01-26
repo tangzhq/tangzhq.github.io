@@ -72,7 +72,10 @@ https://banbao991.github.io/archives/
 
 ## 标签页
 添加tag方法：需要新增标签页
-https://blog.csdn.net/weixin_48927364/article/details/123295436
+https://blog.csdn.net/weixin_48927364/article/details/123295436  
+
+学习资料:  
+https://gitee.com/ForthEspada/CS-Books#https://gitee.com/link?target=https%3A%2F%2Fpan.baidu.com%2Fs%2F14L8E-vG9efQKr_f0EkqX-Q  
 
 
 
