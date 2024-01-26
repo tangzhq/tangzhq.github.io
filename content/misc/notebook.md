@@ -14,6 +14,9 @@ web教程：
 https://developer.mozilla.org/zh-CN/docs/Learn/CSS/First_steps/Getting_started  
 git学习:  
 https://learngitbranching.js.org/  
+学习资料:  
+https://gitee.com/ForthEspada/CS-Books#https://gitee.com/link?target=https%3A%2F%2Fpan.baidu.com%2Fs%2F14L8E-vG9efQKr_f0EkqX-Q  
+
 
 /***************************************************************  
 C++静态函数调用非静态成员编译报错，使用GetInstance规避  
