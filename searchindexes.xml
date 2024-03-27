@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>Cortex M0</title><url>/post/mcu/cortex-m0/</url><categories/><tags/><content type="html"><![CDATA[  mcu基本架构ROM
+Read only memory&mdash;Nonvolatile memory storage for program code. Flash memory
+A special type of ROM, which can be reprogrammed many times, typically for storing program code. SRAM
+Static random access memory&mdash;for data storage. PLL
+Phase Lock Loop&mdash;a device to generate programmable clock frequency based on a reference clock. RTC
+Real Time Clock&mdash;a low power timer for counting seconds (typically runs on a low power oscillator), and in some cases also for minutes, hours and calendar functions. cortex-m框图cortex-m0结构框图:
+cortex-m0+结构框图:
+cortex-m系统结构cortex-m0系统:
+cortex-m0+系统:
+cortex-m0-dma:
+寄存器cortex-m的寄存器分布如下:
+R0&mdash;R12为通用寄存器,由于16位的Thumb指令长度有限，许多Thumb指令只能访问R0&mdash;R7，也称为low registers。有些指令，比如MOV(move), 可以使用所有的寄存器。 R13是堆栈指针
+指令集Moving Data within the Processor 存储映射异常中断  ]]></content></entry><entry><title>ble</title><url>/post/bluetooth/ble/</url><categories/><tags/><content type="html"> LE Audio简介
+LE Audio是下一代蓝牙音频技术，它通过蓝牙低功耗技术传输音频流数据。和经典蓝牙音频相比具有更多新的应用场景及更低的功耗。
+LE Audio依赖于蓝牙核心规范5.2版本的新特性，支持LE Audio的设备需要支持这个特性，也就是LE同步通道（LE Isochronous Channels）。
+LE Audio的主要特性和应用场景包括多重串流音频（Multistream Audio），广播音频分享（Broadcast Audio Sharing），以及助听功能（Hearing Aids）。
+LE Physical Layer
+0~39共40个channel 2400MHz开始
+GFSK调制
+PHY分类:
+LE 1M must support LE 2M optional LE Coded 增加FEC ISO分为CIS和BIS
+扩展adv
+从5.1开始加入extended advertising, 37、38、39是primary adv channel
+其余0-36是general purpose channel 扩展adv机制可以允许adv信息可以在general purpose通道上传输
+extended header包含auxptr和syncinfo域索引相关数据
+auxptr索引aux_adv_ind
+syncinfo索引aux_sync_ind</content></entry><entry><title>bluedroid_osi</title><url>/post/bluetooth/bluedroid_osi/</url><categories/><tags/><content type="html"><![CDATA[  thread.cc线程创建函数：
+thread_t* thread_new(const char* name) { return thread_new_sized(name, DEFAULT_WORK_QUEUE_CAPACITY); } bluedroid中主要线程BTU线程
+static const char* BT_WORKQUEUE_NAME = &#34;bt_workqueue&#34;; bt_workqueue_thread = thread_new(BT_WORKQUEUE_NAME); thread_set_rt_priority(bt_workqueue_thread, BTU_TASK_RT_PRIORITY); // Continue startup on bt workqueue thread. thread_post(bt_workqueue_thread, btu_task_start_up, NULL); return; bt_workqueue线程执行btu_task_start_up,创建btu线程：
+message_loop_thread_ = thread_new(&#34;btu message loop&#34;); thread_set_rt_priority(message_loop_thread_, THREAD_RT_PRIORITY); thread_post(message_loop_thread_, btu_message_loop_run, nullptr); bta_sys_main在btu线程中执行：
+void bta_sys_sendmsg(void* p_msg) { base::MessageLoop* bta_message_loop = get_message_loop(); bta_message_loop-&gt;task_runner()-&gt;PostTask( FROM_HERE, base::Bind(&amp;bta_sys_event, static_cast&lt;BT_HDR*&gt;(p_msg))); } void do_in_bta_thread(const base::Location&amp; from_here, const base::Closure&amp; task) { base::MessageLoop* bta_message_loop = get_message_loop(); bta_message_loop-&gt;task_runner()-&gt;PostTask(from_here, task); } JNI线程
+static const char* BT_JNI_WORKQUEUE_NAME = &#34;bt_jni_workqueue&#34;; bt_jni_workqueue_thread = thread_new_sized(BT_JNI_WORKQUEUE_NAME, MAX_JNI_WORKQUEUE_COUNT); thread_post(bt_jni_workqueue_thread, run_message_loop, nullptr); 使用ps -T -p查看线程,JNI线程的名称为BT Service Call,这是因为这个线程会附加到JVM
+static void btif_jni_associate() { BTIF_TRACE_DEBUG(&#34;%s Associating thread to JVM&#34;, __func__); HAL_CBACK(bt_hal_cbacks, thread_evt_cb, ASSOCIATE_JVM); } static void callback_thread_event(bt_cb_thread_evt event) { JavaVM* vm = AndroidRuntime::getJavaVM(); if (event == ASSOCIATE_JVM) { JavaVMAttachArgs args; char name[] = &#34;BT Service Callback Thread&#34;; args.version = JNI_VERSION_1_6; args.name = name; args.group = NULL; vm-&gt;AttachCurrentThread(&amp;callbackEnv, &amp;args); ALOGV(&#34;Callback thread attached: %p&#34;, callbackEnv); } } 后续btif回调JNI函数都要用到这个callbackEnv
+static JNIEnv *callbackEnv = NULL; JNIEnv* getCallbackEnv() { return callbackEnv; } class CallbackEnv { public: CallbackEnv(const char *methodName) : mName(methodName) { mCallbackEnv = getCallbackEnv(); } ...... a2dp media线程
+/* Start A2DP Source media task */ btif_a2dp_source_cb.worker_thread = thread_new_sized(&#34;media_worker&#34;, MAX_MEDIA_WORKQUEUE_SEM_COUNT); fixed_queue.ccreactor.cc  ]]></content></entry><entry><title>Bluedroid_a2dp</title><url>/post/bluetooth/bluedroid_a2dp/</url><categories/><tags/><content type="html"><![CDATA[  Bluedroid A2DP分析蓝牙A2DP协议定义了两个角色，一个是sink端，如蓝牙耳机，蓝牙音箱，车机等设备。一个是source端，如手机，平板电脑等设备。在Android中两个角色分别对应两个Profile，sink对应A2dpSink Profile，source对应A2dp Profile。 本文基于Android R版本。
+源码架构应用层通过framework层接口使用bluetooth a2dp功能，接口实现位于Bluetooth APP Service（即com.android.bluetooth进程），framework通过AIDL和Bluetooth APP Service通信。Bluetooth APP Service通过JNI和stack层交互。Audio模块通过HIDL将音频PCM数据发送到蓝牙协议栈。A2DP初始化过程创建Media taskbtif_a2dp_source_startup函数创建了media task线程，设置a2dp控制命令处理函数:
+/* Start A2DP Source media task */ btif_a2dp_source_cb.worker_thread = thread_new_sized(&amp;#34;media_worker&amp;#34;, MAX_MEDIA_WORKQUEUE_SEM_COUNT); if (btif_a2dp_source_cb.worker_thread == NULL) { APPL_TRACE_ERROR(&amp;#34;%s: unable to start up media thread&amp;#34;, __func__); btif_a2dp_source_state = BTIF_A2DP_SOURCE_STATE_OFF; return false; } btif_a2dp_source_cb.tx_audio_queue = fixed_queue_new(SIZE_MAX); btif_a2dp_source_cb.cmd_msg_queue = fixed_queue_new(SIZE_MAX); fixed_queue_register_dequeue( btif_a2dp_source_cb.cmd_msg_queue, …  ]]></content></entry><entry><title>Hugo_setup</title><url>/misc/hugo_setup/</url><categories/><tags/><content type="html"><![CDATA[  hugo nexT主题： https://github.com/hugo-next/hugo-theme-next/releaseshugo工具： https://github.com/gohugoio/hugo/releases创建站点hugo new site site_name
+cd site_name
+git init
+将主题hugo-theme-next放置到themes文件夹下
+拷贝主题中exampleSite 目录的config.yaml文件到根目录
+新建一篇blog：
+hugo new content_type/content_name.md
+hugo server
+注意若 content_name.md 的参数 draft 为true，则执行上命令后文章并不显示
+若要显示 draft 为 true 的草稿，则用下命令
+hugo server -D
+若要在之后网页中显示文章，则要把 draft 改为 false
+GIT操作创建分支git branch -M main
+在git branch命令中，-M选项用于重命名分支。 当使用-M选项时，可以将分支重命名为指定的名称，即使已存在同名的分支也不会产生错误。 这将替换现有的同名分支。
+命令执行后，Git会将默认分支重命名为&quot;main&quot;。 如果之前没有名为&quot;main&quot;的分支，将创建该分支。 如果已经存在名为&quot;main&quot;的分支，则会覆盖该分支的内容。
+确定要推送的远程仓库git remote add origin https://github.com/&lt;用户名&gt;/&lt;仓库名&gt;.git 添加远程仓库的映射，远程仓库在本地的别名一般是origin
+从github远程仓库clone，默认情况下当前指针将位于remotes/origin/HEAD，是远程仓库引用的符号分支
+可以使用git remote set-head origin -d删除origin/HEAD符号引用
+推送到远程仓库git push -u origin main 带上-u参数其实就相当于记录了push到远端分支的默认值，当下次要继续push到这个远端分支的时候推送命令可以简写成git push
+示例git init
+git add README.md
+git commit -m &ldquo;first commit&rdquo;
+git branch -M main
+git remote add origin git@github.com:tangzhq/tangzhq.github.io.git //ssh方式
+git remote add origin https://github.com/tangzhq/tangzhq.github.io.git//http方式
+git remote set-url origin git@github.com:tangzhq/tangzhq.github.io.git //切换成ssh方式
+git push -u origin main
+github配置查看git config： git config --global --list
+配置用户名和邮箱：
+git config --global user.name &ldquo;用户名&rdquo;
+git config --global user.email &ldquo;邮箱地址&rdquo;
+新建ssh key： ssh-keygen -t rsa -C &ldquo;邮箱&rdquo;
+合并提交记录git rebase -i 用法:
+https://blog.csdn.net/the_power/article/details/104651772/https://www.jb51.net/article/191650.htmhttps://banbao991.github.io/archives/如果想把 rebase 之后的 main 分支推送到远程仓库，Git 会阻止你这么做，因为两个分支包含冲突。但你可以传入 -force 标记来强行推送。
+标签页添加tag方法：需要新增标签页 https://blog.csdn.net/weixin_48927364/article/details/123295436学习资料:
+https://gitee.com/ForthEspada/CS-Books#https://gitee.com/link?target=https%3A%2F%2Fpan.baidu.com%2Fs%2F14L8E-vG9efQKr_f0EkqX-Q  ]]></content></entry></search>
